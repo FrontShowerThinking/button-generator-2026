@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de botones Outlook · SFMC</title>
+<link rel="icon" href="https://www.showerthinking.es/favicon.ico" type="image/x-icon">
+<style>
+  :root {
+    --bg:#1a1a1a;--bg2:#242424;--bg3:#2e2e2e;
+    --border:#3a3a3a;--border2:#444;
+    --text:#e8e8e8;--text2:#999;--text3:#666;
+    --accent:#cc785c;--radius:8px;--radius-sm:6px;
+    --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+    --mono:'SF Mono','Fira Code','Courier New',monospace;
+    --danger-bg:#2d1a1a;--danger-border:#5a2a2a;--danger-text:#f08080;
+    --warn-bg:#2a2310;--warn-border:#5a4a20;--warn-text:#d4a843;
+    --ok-bg:#142014;--ok-border:#2a4a2a;--ok-text:#6abf6a;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh;}
+  .app{max-width:1200px;margin:0 auto;padding:24px 24px 48px;}
+  .app-header{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);text-align:center;}
+  .app-header h1{margin:0 0 4px;font-size:18px;font-weight:600;}
+  .app-header p{margin:0 0 16px;font-size:12px;color:var(--text3);}
+  .tabs{display:inline-flex;gap:6px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:4px;min-width:320px;}
+  .tab{flex:1;padding:8px 16px;border:none;border-radius:calc(var(--radius) - 2px);cursor:pointer;font-size:13px;font-weight:500;font-family:var(--font);background:transparent;color:var(--text2);transition:all .15s;}
+  .tab:hover{color:var(--text);}
+  .tab.active{background:var(--bg3);color:var(--text);border:1px solid var(--border2);}
+
+  /* Two-column layout for generator */
+  .gen-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+  .gen-inputs{min-width:0;}
+  .gen-output{min-width:0;position:sticky;top:24px;}
+
+  .section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:18px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+  .section-label:first-child{margin-top:0;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  .field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+  .field label{font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;}
+  .field input,.field select{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:var(--font);padding:8px 10px;outline:none;transition:border-color .15s;width:100%;}
+  .field input:focus,.field select:focus{border-color:var(--accent);}
+  .field select option{background:var(--bg2);}
+  .radio-group{display:flex;gap:16px;padding:6px 0;}
+  .radio-group label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:0;cursor:pointer;}
+  .radio-group input[type=radio]{accent-color:var(--accent);}
+  .auto-note{font-size:11px;color:var(--text3);font-style:italic;font-weight:400;margin-left:4px;text-transform:none;letter-spacing:0;}
+  .btn-generate{width:100%;padding:11px 20px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:14px;font-weight:500;font-family:var(--font);cursor:pointer;margin-top:16px;transition:background .15s,border-color .15s;}
+  .btn-generate:hover{background:#353535;border-color:#555;}
+  .preview-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px 24px;text-align:center;margin-bottom:10px;}
+  .preview-empty{color:var(--text3);font-size:13px;}
+  .info-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+  .info-pill{font-size:11px;padding:3px 10px;border-radius:100px;background:var(--bg2);border:1px solid var(--border2);color:var(--text2);}
+  .output-wrap{position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-top:4px;}
+  .output-label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding:10px 12px 0;}
+  .output-wrap pre{margin:0;padding:10px 12px 14px;font-family:var(--mono);font-size:11.5px;color:#c9d1d9;white-space:pre-wrap;word-break:break-all;line-height:1.6;max-height:400px;overflow-y:auto;}
+  .copy-btn{position:absolute;top:8px;right:8px;padding:4px 12px;font-size:12px;font-family:var(--font);border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg3);cursor:pointer;color:var(--text2);transition:color .15s;}
+  .copy-btn:hover{color:var(--text);}
+  .audit-textarea{width:100%;min-height:140px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:12px;font-family:var(--mono);padding:10px 12px;outline:none;resize:vertical;transition:border-color .15s;line-height:1.5;}
+  .audit-textarea:focus{border-color:var(--accent);}
+  .results{margin-top:16px;display:flex;flex-direction:column;gap:6px;}
+  .result-item{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border-radius:var(--radius-sm);font-size:13px;line-height:1.5;border:1px solid;}
+  .result-item.critical{background:var(--danger-bg);border-color:var(--danger-border);color:var(--danger-text);}
+  .result-item.warning{background:var(--warn-bg);border-color:var(--warn-border);color:var(--warn-text);}
+  .result-item.ok{background:var(--ok-bg);border-color:var(--ok-border);color:var(--ok-text);}
+  .result-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:100px;white-space:nowrap;flex-shrink:0;letter-spacing:.03em;margin-top:1px;margin-right:4px;}
+  .result-tag.critical{background:var(--danger-border);color:var(--danger-text);}
+  .result-tag.warning{background:var(--warn-border);color:var(--warn-text);}
+  .result-tag.ok{background:var(--ok-border);color:var(--ok-text);}
+  .fixed-label{font-size:12px;font-weight:500;color:var(--text2);margin-top:20px;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .fixed-label span{font-size:11px;color:var(--text3);font-weight:400;}
+  @media(max-width:800px){.gen-layout{grid-template-columns:1fr;}.gen-output{position:static;}}
+  @media(max-width:520px){.grid,.grid3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="app-header">
+    <h1>Generador · Auditor de botones Outlook</h1>
+    <p>SFMC · Outlook 2508 (compilación 19127.20622) · 600px</p>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('gen')">Generar botón</button>
+      <button class="tab" onclick="switchTab('audit')">Auditar botón</button>
+    </div>
+  </div>
+
+  <!-- GENERADOR -->
+  <div id="tab-gen">
+    <div class="gen-layout">
+      <!-- LEFT: inputs -->
+      <div class="gen-inputs">
+        <div class="section-label">Texto y tipografía</div>
+        <div class="field"><label>Texto del botón</label><input type="text" id="g-text" value="Regístrese aquí" oninput="onTextChange()"></div>
+        <div class="grid3">
+          <div class="field"><label>Font-size</label>
+            <select id="g-fs" onchange="updatePreview()">
+              <option value="12">12px</option>
+              <option value="13">13px</option>
+              <option value="14">14px</option>
+              <option value="15">15px</option>
+              <option value="16" selected>16px</option>
+              <option value="17">17px</option>
+              <option value="18">18px</option>
+              <option value="19">19px</option>
+              <option value="20">20px</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Negrita</label>
+            <div class="radio-group" style="padding-top:10px;"><label><input type="checkbox" id="g-bold" checked onchange="updatePreview()" style="accent-color:var(--accent);"> Bold</label></div>
+          </div>
+          <div class="field"><label>Color del texto</label><input type="text" id="g-textcolor" value="#ffffff" oninput="updatePreview()"></div>
+        </div>
+
+        <div class="section-label">Color y estilo</div>
+        <div class="grid">
+          <div class="field"><label>Color principal</label><input type="text" id="g-color" value="#0E98B0" oninput="updatePreview()"></div>
+          <div class="field"><label>Gradiente (opcional)</label><input type="text" id="g-color2" placeholder="vacío = sólido" oninput="updatePreview()"></div>
+        </div>
+        <div class="field"><label>Estilo</label>
+          <select id="g-style" onchange="updatePreview()">
+            <option value="pill">Pill (redondo)</option>
+            <option value="rounded">Rounded (esquinas)</option>
+          </select>
+        </div>
+
+        <div class="grid">
+          <div class="field"><label>Padding vertical (px)</label><input type="number" id="g-pv" value="15" min="1" oninput="onPaddingChange()"></div>
+          <div class="field"><label>Padding horizontal (px)</label><input type="number" id="g-ph" value="20" min="1" oninput="onPaddingChange()"></div>
+        </div>
+        <div id="g-padding-warn" style="display:none;font-size:11px;color:var(--warn-text);background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius-sm);padding:6px 10px;margin-bottom:8px;">
+          ⚠️ Padding por debajo del recomendado (15px vertical · 20px horizontal).
+        </div>
+
+        <div class="section-label">SFMC</div>
+        <div class="grid">
+          <div class="field"><label>¿Trackeable?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="g-track" value="yes" checked onchange="updateTracking()"> Sí (C_)</label>
+              <label><input type="radio" name="g-track" value="no" onchange="updateTracking()"> No (N_)</label>
+            </div>
+          </div>
+          <div class="field"><label>Alias</label><input type="text" id="g-alias" value="C_ES_EJEMPLO_Jun26_Email1_CTA1" oninput="updatePreview()"></div>
+        </div>
+        <div class="grid">
+          <div class="field"><label>URL (href)</label><input type="text" id="g-href" value="https://www.ejemplo.es" oninput="updatePreview()"></div>
+          <div class="field"><label>Title <span class="auto-note">auto = texto</span></label><input type="text" id="g-title" placeholder="Se usa el texto del botón" oninput="onTitleChange()"></div>
+        </div>
+
+        <button class="btn-generate" onclick="generateBtn()">Generar HTML</button>
+      </div>
+
+      <!-- RIGHT: preview + code -->
+      <div class="gen-output">
+        <div class="section-label">Preview</div>
+        <div class="preview-box" id="g-preview"><span class="preview-empty">El preview aparecerá aquí</span></div>
+        <div class="info-pills" id="g-info"></div>
+        <div class="section-label" style="margin-top:0">HTML generado</div>
+        <div class="output-wrap">
+          <div class="output-label">HTML</div>
+          <button class="copy-btn" onclick="copyCode('g-code')">Copiar</button>
+          <pre id="g-code"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDITOR -->
+  <div id="tab-audit" style="display:none">
+    <div style="max-width:720px;margin:0 auto;">
+      <div class="field"><label>HTML del botón</label><textarea class="audit-textarea" id="a-code" placeholder="Pega aquí el código HTML del botón..."></textarea></div>
+    <button class="btn-generate" onclick="auditBtn()">Auditar botón</button>
+    <div id="a-results" class="results"></div>
+    <div id="a-fixed-wrap" style="display:none">
+      <div class="fixed-label">Código corregido <span>(solo errores críticos)</span></div>
+      <div class="output-wrap">
+        <button class="copy-btn" onclick="copyCode('a-fixed')">Copiar</button>
+        <pre id="a-fixed"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CW16={' ':4.4,'a':8.9,'b':9.3,'c':8.0,'d':9.3,'e':8.9,'f':5.3,'g':9.3,'h':9.3,'i':3.6,'j':3.6,'k':8.9,'l':3.6,'m':13.8,'n':9.3,'o':9.8,'p':9.3,'q':9.3,'r':5.8,'s':8.0,'t':5.8,'u':9.3,'v':8.4,'w':11.6,'x':8.4,'y':8.4,'z':8.0,'A':10.7,'B':10.2,'C':10.2,'D':11.1,'E':9.3,'F':8.4,'G':10.7,'H':10.7,'I':4.0,'J':4.4,'K':10.2,'L':8.9,'M':12.4,'N':10.7,'O':11.6,'P':9.8,'Q':11.6,'R':10.2,'S':9.3,'T':9.3,'U':10.7,'V':10.2,'W':13.8,'X':9.8,'Y':9.8,'Z':9.3,'á':8.9,'é':8.9,'í':3.6,'ó':9.8,'ú':9.3,'ñ':9.3,'Á':10.7,'É':9.3,'Í':4.0,'Ó':11.6,'Ú':10.7,'Ñ':10.7};
+
+function getSafety(text,fs){
+  const scale=fs/14,t=twRaw(text,fs),upper=isUpper(text);
+  const ts=100*scale,txl=200*scale;
+  let s;
+  if(upper){if(t<ts)s=80*scale;else if(t<txl)s=120*scale;else s=t*0.55;}
+  else{if(t<ts)s=60*scale;else s=100*scale;}
+  return Math.round(s/5)*5;
+}
+function twRaw(text,fs){let w=0;for(const c of text)w+=(CW16[c]||8.0);return w*(fs/16);}
+function isUpper(text){const l=text.split('').filter(c=>/[a-zA-ZÀ-ÿ]/.test(c));return l.length>0&&l.filter(c=>c===c.toUpperCase()).length/l.length>0.5;}
+function getHeight(fs){if(fs<=14)return 50;if(fs<=16)return 55;if(fs<=18)return 60;return 65;}
+function tw(text,fs){return twRaw(text,fs);}
+function calcVML(text,fs,pv,ph){
+  const safety=getSafety(text,fs),raw=twRaw(text,fs)+ph*2+safety;
+  const vmlW=Math.round(raw/5)*5,aW=vmlW-safety,height=getHeight(fs);
+  const lh={12:14,13:16,14:16,15:18,16:20,17:22,18:22,19:24,20:24}[fs]||20;
+  return{vmlW,aW,height,lh,safety,twPx:Math.round(twRaw(text,fs))};
+}
+function calcMinVML(text,fs,ph){
+  const safety=getSafety(text,fs),twPx=Math.round(twRaw(text,fs));
+  return{minVmlW:Math.ceil(twRaw(text,fs)+ph*2+safety),safety,twPx};
+}
+
+let titleUserEdited=false;
+function onTextChange(){if(!titleUserEdited)document.getElementById('g-title').placeholder=document.getElementById('g-text').value||'Se usa el texto del botón';updatePreview();}
+function onTitleChange(){titleUserEdited=document.getElementById('g-title').value.trim()!=='';updatePreview();}
+function getTitle(){return document.getElementById('g-title').value.trim()||document.getElementById('g-text').value.trim()||'Botón';}
+
+function buildHTML(p){
+  const{text,fs,pv,ph,color,color2,style,alias,href,title,trackeable,textColor,bold}=p;
+  const{vmlW,aW,height,lh}=calcVML(text,fs,pv,ph);
+  const arcsize=style==='pill'?'50%':'16%',radius=style==='pill'?'100px':'8px';
+  const hasGrad=color2&&color2.trim();
+  const bgLines=hasGrad?`background-color: ${color};\n    background: linear-gradient(to left, ${color}, ${color2.trim()});`:`background-color: ${color};`;
+  const fw=bold?'bold':'normal';
+  return `<div style="text-align:center;">
+<!--[if mso]>
+<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml"
+  xmlns:w="urn:schemas-microsoft-com:office:word"
+  style="v-text-anchor:middle;width:${vmlW}px;height:${height}px;"
+  arcsize="${arcsize}"
+  strokecolor="${color}"
+  strokeweight="1px"
+  fillcolor="${color}">
+  <w:anchorlock/>
+  <center style="color:${textColor};font-family:Arial,Helvetica,sans-serif;font-weight:${fw};font-size:${fs}px;line-height:${lh}px;mso-line-height-rule:exactly;mso-text-raise:0;">
+<![endif]-->
+<a
+  alias="${alias}"
+  conversion="${trackeable?'true':'false'}"
+  href="${href}"
+  title="${title}"
+  style="${bgLines}
+    color: ${textColor};
+    text-decoration: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: ${fs}px;
+    font-weight: ${fw};
+    border-radius: ${radius};
+    display: inline-block;
+    line-height: 1;
+    padding: ${pv}px ${ph}px;
+    text-align: center;
+    width: ${aW}px;
+    text-size-adjust: none;
+    mso-line-height-rule: exactly;"
+  target="_blank">
+  <span style="color:${textColor};text-decoration:none;">${text}</span>
+</a><!--[if mso]>
+  </center>
+</v:roundrect>
+<![endif]-->
+</div>`;}
+
+function onPaddingChange(){
+  const pv=parseInt(document.getElementById('g-pv').value)||0;
+  const ph=parseInt(document.getElementById('g-ph').value)||0;
+  document.getElementById('g-padding-warn').style.display=(pv<15||ph<20)?'block':'none';
+  updatePreview();
+}
+function updateTracking(){
+  const yes=document.querySelector('input[name="g-track"]:checked').value==='yes';
+  const a=document.getElementById('g-alias');
+  if(yes&&a.value.startsWith('N_'))a.value='C_'+a.value.slice(2);
+  if(!yes&&a.value.startsWith('C_'))a.value='N_'+a.value.slice(2);
+}
+function getGenParams(){
+  return{
+    text:document.getElementById('g-text').value||'Botón',
+    fs:parseInt(document.getElementById('g-fs').value),
+    pv:parseInt(document.getElementById('g-pv').value)||1,
+    ph:parseInt(document.getElementById('g-ph').value)||1,
+    textColor:document.getElementById('g-textcolor').value||'#ffffff',
+    bold:document.getElementById('g-bold').checked,
+    color:document.getElementById('g-color').value||'#000000',
+    color2:document.getElementById('g-color2').value,
+    style:document.getElementById('g-style').value,
+    alias:document.getElementById('g-alias').value||'C_ALIAS',
+    href:document.getElementById('g-href').value||'#',
+    title:getTitle(),
+    trackeable:document.querySelector('input[name="g-track"]:checked').value==='yes'
+  };
+}
+function updatePreview(){
+  const p=getGenParams();
+  const{vmlW,height,safety,twPx}=calcVML(p.text,p.fs,p.pv,p.ph);
+  const radius=p.style==='pill'?'100px':'8px';
+  const bg=(p.color2&&p.color2.trim())?`linear-gradient(to left,${p.color},${p.color2.trim()})`:p.color;
+  const fw=p.bold?'bold':'normal';
+  document.getElementById('g-preview').innerHTML=`<a href="#" style="background:${bg};color:${p.textColor||'#fff'};text-decoration:none;font-family:Arial,sans-serif;font-size:${p.fs}px;font-weight:${fw};border-radius:${radius};display:inline-block;padding:${p.pv}px ${p.ph}px;">${p.text}</a>`;
+  const ts=document.getElementById('g-title').value.trim()?'personalizado':'auto';
+  document.getElementById('g-info').innerHTML=`<span class="info-pill">VML: ${vmlW}px</span><span class="info-pill">height: ${height}px</span><span class="info-pill">safety: ${safety}px</span><span class="info-pill">texto: ${twPx}px</span><span class="info-pill">${p.style}</span><span class="info-pill">${p.trackeable?'trackeable':'no trackeable'}</span><span class="info-pill">title: ${ts}</span>`;
+}
+function generateBtn(){
+  const p=getGenParams();
+  document.getElementById('g-code').textContent=buildHTML(p);
+  updatePreview();
+}
+
+// --- AUDIT ---
+function getAStyle(code){
+  // Try full <a>...</a> block first
+  var m=code.match(/<a\b[\s\S]*?<\/a>/i);
+  if(m){var s=m[0].match(/\bstyle\s*=\s*"([\s\S]*?)"\s*target/i);if(s)return s[1];
+        var s2=m[0].match(/\bstyle\s*=\s*"([\s\S]*?)"/i);if(s2)return s2[1];}
+  // Fallback: find style="..." block before target="_blank" (typical <a> style)
+  var s3=code.match(/\bstyle\s*=\s*"([\s\S]*?)"\s*target\s*=/i);
+  if(s3)return s3[1];
+  // Last fallback: any style with CSS properties typical of <a> buttons
+  var s4=code.match(/\bstyle\s*=\s*"([\s\S]*?background-color[\s\S]*?)"/i);
+  if(s4)return s4[1];
+  return null;
+}
+function getVMLDims(code){const m=code.match(/v:roundrect[^>]*style\s*=\s*["']([^"']+)["']/i);if(!m)return{vmlW:null,vmlH:null,hasHeight:false};const s=m[1];const wm=s.match(/width\s*:\s*(\d+)\s*px/i),hm=s.match(/height\s*:\s*(\d+)\s*px/i);return{vmlW:wm?parseInt(wm[1]):null,vmlH:hm?parseInt(hm[1]):null,hasHeight:!!hm};}
+function getBtnText(code){
+  var m=code.match(/<(?:b|strong|span)[^>]*>\s*([^<]+?)\s*<\/(?:b|strong|span)>/i);
+  if(m)return m[1].trim();
+  var a=code.match(/<a\b[\s\S]*?>([\s\S]*?)<\/a>/i);
+  if(a){var t=a[1].replace(/<[^>]+>/g,'').trim();if(t)return t;}
+  var tit=code.match(/\btitle\s*=\s*["']([^"']+)["']/i);
+  if(tit)return tit[1].trim();
+  return null;
+}
+function hasBrokenConditional(code){return/<![\s\r\n]+\[endif\]/i.test(code);}
+function hasProperATag(code){return/<!\[endif\]-->\s*<a[\s\n>]/i.test(code);}
+
+function auditBtn(){
+  const code=document.getElementById('a-code').value.trim();if(!code)return;
+  const errors=[],warnings=[],oks=[];
+  const aStyle=getAStyle(code);
+  const{vmlW,vmlH,hasHeight}=getVMLDims(code);
+  const hasFillcolor=/fillcolor\s*=\s*["']?\s*#/i.test(code);
+  const hasBgColor=aStyle?/background-color\s*:/i.test(aStyle):false;
+  const hasBgGrad=aStyle?/background\s*:\s*linear-gradient/i.test(aStyle):false;
+  const aTagOk=hasProperATag(code),brokenCond=hasBrokenConditional(code);
+  const fsM=aStyle?aStyle.match(/font-size\s*:\s*(\d+)\s*px/i):null,fs=fsM?parseInt(fsM[1]):null;
+  const padM=aStyle?aStyle.match(/padding\s*:\s*(\d+)\s*px\s+(\d+)\s*px/i):null;
+  const pv=padM?parseInt(padM[1]):null,ph=padM?parseInt(padM[2]):null;
+  const aWM=aStyle?aStyle.match(/(?:min-)?width\s*:\s*(\d+)\s*px/i):null,aWidth=aWM?parseInt(aWM[1]):null;
+  const arcM=code.match(/arcsize\s*=\s*["']([^"']+)["']/i),arcsize=arcM?arcM[1]:null;
+  const brM=aStyle?aStyle.match(/border-radius\s*:\s*(\d+[^;]*)/i):null,borderRadius=brM?brM[1].trim():null;
+  const aliasM=code.match(/alias\s*=\s*["']([^"']+)["']/i),convM=code.match(/conversion\s*=\s*["']([^"']+)["']/i);
+  const titleM=code.match(/\btitle\s*=\s*["']([^"']+)["']/i);
+  const alias=aliasM?aliasM[1].trim():null,conv=convM?convM[1].trim():null,btnText=getBtnText(code);
+
+  if(!hasFillcolor)errors.push('Falta fillcolor en el VML — botón invisible en Outlook Desktop.');else oks.push('fillcolor presente en VML.');
+  if(hasBgGrad&&!hasBgColor)errors.push('Tiene linear-gradient pero falta background-color fallback — botón invisible en OWA.');
+  else if(hasBgGrad&&hasBgColor)oks.push('background-color fallback + linear-gradient correctos.');
+  else if(hasBgColor)oks.push('Sin gradiente — background-color sólido correcto.');
+  else warnings.push('No se detectó background-color en el &lt;a&gt;.');
+  if(brokenCond)errors.push('El cierre condicional &lt;![endif]--&gt; está roto.');
+  var hasATag=/<a\b/i.test(code);
+  if(!hasATag){errors.push('Falta la etiqueta de apertura &lt;a — el código está incompleto. Asegúrate de copiar el botón completo.');}
+  else if(!aTagOk){errors.push('La etiqueta &lt;a no está correctamente posicionada después de &lt;![endif]--&gt;.');}
+  else if(!brokenCond){oks.push('Etiqueta &lt;a correctamente posicionada.');}
+
+  function recH(fz){if(!fz)return 55;if(fz<=14)return 50;if(fz<=16)return 55;if(fz<=18)return 60;return 65;}
+  const rH=recH(fs);
+  if(!hasHeight)errors.push(`El VML no tiene height definido. Añadir height:${rH}px.`);
+  else if(vmlH!==null){
+    if(vmlH<rH)errors.push(`Height VML (${vmlH}px) insuficiente para font-size ${fs||'?'}px. Recomendado: ${rH}px.`);
+    else if(vmlH>rH+10)warnings.push(`Height VML (${vmlH}px) mayor al recomendado (${rH}px) para font-size ${fs||'?'}px.`);
+    else oks.push(`Height VML (${vmlH}px) correcto para font-size ${fs||'?'}px.`);
+  }
+  if(pv!==null&&pv<15)warnings.push(`Padding vertical (${pv}px) por debajo del recomendado de 15px.`);
+  if(ph!==null&&ph<20)warnings.push(`Padding horizontal (${ph}px) por debajo del recomendado de 20px.`);
+  if(pv!==null&&ph!==null&&pv>=15&&ph>=20)oks.push(`Padding ${pv}px ${ph}px correcto.`);
+
+  if(fs&&btnText&&vmlW!==null){
+    const uPh=ph!==null?ph:20,uPv=pv!==null?pv:15;
+    const{minVmlW,safety,twPx}=calcMinVML(btnText,fs,uPh);
+    const{vmlW:optW}=calcVML(btnText,fs,uPv,uPh);
+    if(vmlW<minVmlW)errors.push(`VML width (${vmlW}px) insuficiente para "${btnText}" a ${fs}px. Mínimo: texto ${twPx}px + padding ${uPh*2}px + safety ${safety}px = ${minVmlW}px. Óptimo: ${optW}px.`);
+    else if(vmlW<optW)warnings.push(`VML width (${vmlW}px) suficiente pero el óptimo calculado es ${optW}px.`);
+    else oks.push(`VML width (${vmlW}px) correcto para "${btnText}".`);
+  }else if(!btnText)warnings.push('No se pudo extraer el texto del botón.');
+
+  if(arcsize&&borderRadius){const bv=parseFloat(borderRadius);
+    if(arcsize==='50%'&&bv<50)warnings.push(`arcsize="50%" (pill) pero border-radius:${borderRadius} — debería ser 100px.`);
+    else if(arcsize==='16%'&&bv>20)warnings.push(`arcsize="16%" (rounded) pero border-radius:${borderRadius} — debería ser 8px.`);
+    else oks.push(`arcsize="${arcsize}" coherente con border-radius:${borderRadius}.`);
+  }
+  if(alias&&conv){const at=alias.startsWith('C_'),ct=conv==='true';
+    if(at!==ct)errors.push(`Inconsistencia: alias empieza por "${alias.substring(0,2)}" pero conversion="${conv}".`);
+    else oks.push(`alias (${alias.substring(0,2)}) y conversion="${conv}" coherentes.`);
+  }
+  if(!titleM)warnings.push('Falta el atributo title.');
+  else if(btnText&&titleM[1].trim()===btnText)oks.push(`title="${titleM[1]}" coincide con el texto del botón.`);
+  else oks.push(`title="${titleM[1]}" personalizado.`);
+
+  let html='';
+  errors.forEach(e=>{html+=`<div class="result-item critical"><span class="result-tag critical">Error</span><span>${e}</span></div>`;});
+  warnings.forEach(w=>{html+=`<div class="result-item warning"><span class="result-tag warning">Aviso</span><span>${w}</span></div>`;});
+  oks.forEach(o=>{html+=`<div class="result-item ok"><span class="result-tag ok">OK</span><span>${o}</span></div>`;});
+  document.getElementById('a-results').innerHTML=html;
+  const hasCritical=errors.length>0;
+  document.getElementById('a-fixed-wrap').style.display=hasCritical?'block':'none';
+  if(hasCritical)document.getElementById('a-fixed').textContent=buildFixed(code,{hasBgColor,hasBgGrad,fs,vmlH,hasHeight,vmlW,aWidth,aStyle,pv,ph,btnText,brokenCond,titleM});
+}
+
+function buildFixed(code,c){
+  let f=code;
+  const uPv=c.pv!==null?c.pv:15,uPh=c.ph!==null?c.ph:20;
+  if(!c.hasBgColor&&c.hasBgGrad){const m=f.match(/linear-gradient[^)]*?(#[0-9a-fA-F]{3,6})/i);const fb=m?m[1]:'#000000';f=f.replace(/background\s*:\s*linear-gradient/i,`background-color: ${fb};\n    background: linear-gradient`);}
+  function rH(fz){if(!fz)return 55;if(fz<=14)return 50;if(fz<=16)return 55;if(fz<=18)return 60;return 65;}
+  const recH=rH(c.fs);
+  if(!c.hasHeight)f=f.replace(/(v:roundrect[^>]*style\s*=\s*"[^"]*width\s*:\s*\d+\s*px\s*)/i,`$1;height:${recH}px`);
+  else if(c.vmlH!==null&&c.vmlH<recH)f=f.replace(/(v:roundrect[^>]*style\s*=\s*"[^"]*height\s*:\s*)\d+(\s*px)/i,`$1${recH}$2`);
+  if(c.fs&&c.btnText&&c.vmlW!==null){
+    const{minVmlW}=calcMinVML(c.btnText,c.fs,uPh);
+    if(c.vmlW<minVmlW){const{vmlW:optW}=calcVML(c.btnText,c.fs,uPv,uPh);f=f.replace(/(v:roundrect[^>]*style\s*=\s*["'][^"']*width\s*:\s*)\d+(\s*px)/i,`$1${optW}$2`);}
+  }
+  if(c.brokenCond)f=f.replace(/<!\s*\r?\n\s*\[endif\]/gi,'<![endif]');
+  if(!c.titleM&&c.btnText)f=f.replace(/target="_blank"/,`title="${c.btnText}" target="_blank"`);
+  return f;
+}
+
+function switchTab(tab){
+  document.getElementById('tab-gen').style.display=tab==='gen'?'block':'none';
+  document.getElementById('tab-audit').style.display=tab==='audit'?'block':'none';
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(i===0)===(tab==='gen')));
+}
+function copyCode(id){
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{
+    const btn=document.getElementById(id).previousElementSibling;
+    const orig=btn.textContent;btn.textContent='¡Copiado!';setTimeout(()=>btn.textContent=orig,1500);
+  });
+}
+updatePreview();
+</script>
+</body>
+</html>
