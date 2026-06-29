@@ -77,7 +77,10 @@
 <body>
 <div class="app">
   <div class="app-header">
-    <h1>Generador · Auditor de botones Outlook</h1>
+    <h1 style="display:inline-flex;align-items:center;gap:10px;">
+      Generador · Auditor de botones Outlook
+      <button onclick="toggleDpiPanel()" title="Configuración HEAD" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--text3);padding:0;line-height:1;vertical-align:middle;">⚙️</button>
+    </h1>
     <p>SFMC · Outlook 2508 (compilación 19127.20622) · 600px</p>
     <div class="tabs">
       <button class="tab active" onclick="switchTab('gen')">Generar botón</button>
@@ -114,14 +117,31 @@
         </div>
 
         <div class="section-label">Color y estilo</div>
-        <div class="grid">
-          <div class="field"><label>Color principal</label><input type="text" id="g-color" value="#0E98B0" oninput="updatePreview()"></div>
-          <div class="field"><label>Gradiente (opcional)</label><input type="text" id="g-color2" placeholder="vacío = sólido" oninput="updatePreview()"></div>
+        <div style="display:flex;gap:4px;margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:3px;">
+          <button id="ctab-solid" onclick="setColorMode('solid')" style="flex:1;padding:6px 8px;border:1px solid var(--border2);border-radius:calc(var(--radius) - 2px);cursor:pointer;font-size:12px;font-weight:500;font-family:var(--font);background:var(--bg3);color:var(--text);">Sólido</button>
+          <button id="ctab-gradient" onclick="setColorMode('gradient')" style="flex:1;padding:6px 8px;border:none;border-radius:calc(var(--radius) - 2px);cursor:pointer;font-size:12px;font-weight:500;font-family:var(--font);background:transparent;color:var(--text2);">Degradado</button>
+          <button id="ctab-border" onclick="setColorMode('border')" style="flex:1;padding:6px 8px;border:none;border-radius:calc(var(--radius) - 2px);cursor:pointer;font-size:12px;font-weight:500;font-family:var(--font);background:transparent;color:var(--text2);">Borde</button>
         </div>
-        <div class="field"><label>Estilo</label>
+        <div id="cmode-solid">
+          <div class="field"><label>Color de fondo</label><input type="text" id="g-color" value="#0E98B0" oninput="updatePreview()"></div>
+        </div>
+        <div id="cmode-gradient" style="display:none">
+          <div class="grid">
+            <div class="field"><label>Color izquierda</label><input type="text" id="g-grad1" value="#0E98B0" oninput="updatePreview()"></div>
+            <div class="field"><label>Color derecha</label><input type="text" id="g-grad2" value="#004676" oninput="updatePreview()"></div>
+          </div>
+        </div>
+        <div id="cmode-border" style="display:none">
+          <div class="grid">
+            <div class="field"><label>Color del borde</label><input type="text" id="g-bordercol" value="#0E98B0" oninput="updatePreview()"></div>
+            <div class="field"><label>Color interior</label><input type="text" id="g-bgcol" value="#ffffff" oninput="updatePreview()"></div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:8px;"><label>Forma</label>
           <select id="g-style" onchange="updatePreview()">
             <option value="pill">Pill (redondo)</option>
             <option value="rounded">Rounded (esquinas)</option>
+            <option value="square">Square (sin radio)</option>
           </select>
         </div>
 
@@ -166,6 +186,38 @@
     </div>
   </div>
 
+  <!-- DPI Config Popup -->
+  <div id="dpi-panel" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:480px;max-width:90vw;max-height:85vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:24px 28px;z-index:1000;box-shadow:0 16px 48px rgba(0,0,0,.6);">
+    <div style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:-1;" onclick="toggleDpiPanel()"></div>
+    <button onclick="toggleDpiPanel()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1;">×</button>
+    <p style="margin:0 0 4px;font-size:15px;font-weight:600;color:var(--text);">⚙️ Configuración del HEAD</p>
+    <p style="margin:0 0 16px;font-size:12px;color:var(--text3);">Añade esto en el &lt;head&gt; de tu template SFMC para que los botones VML funcionen correctamente en Outlook.</p>
+
+    <p style="margin:0 0 6px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;">1. Namespaces en el tag &lt;html&gt;</p>
+    <div style="position:relative;">
+      <pre style="margin:0 0 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--mono);font-size:11px;color:#c9d1d9;white-space:pre;overflow-x:auto;" id="dpi-code-1">&lt;html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:v="urn:schemas-microsoft-com:vml"
+      xmlns:o="urn:schemas-microsoft-com:office:office"&gt;</pre>
+      <button onclick="copyDpi('dpi-code-1',this)" style="position:absolute;top:6px;right:6px;padding:3px 10px;font-size:11px;font-family:var(--font);border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);cursor:pointer;color:var(--text2);">Copiar</button>
+    </div>
+
+    <p style="margin:0 0 6px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;">2. Bloque DPI dentro del &lt;head&gt;</p>
+    <div style="position:relative;">
+      <pre style="margin:0 0 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--mono);font-size:11px;color:#c9d1d9;white-space:pre;overflow-x:auto;" id="dpi-code-2">&lt;!--[if mso]&gt;
+&lt;xml&gt;
+  &lt;o:OfficeDocumentSettings&gt;
+    &lt;o:AllowPNG/&gt;
+    &lt;o:PixelsPerInch&gt;96&lt;/o:PixelsPerInch&gt;
+  &lt;/o:OfficeDocumentSettings&gt;
+&lt;/xml&gt;
+&lt;![endif]--&gt;</pre>
+      <button onclick="copyDpi('dpi-code-2',this)" style="position:absolute;top:6px;right:6px;padding:3px 10px;font-size:11px;font-family:var(--font);border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);cursor:pointer;color:var(--text2);">Copiar</button>
+    </div>
+
+    <p style="margin:0;font-size:12px;color:var(--warn-text);background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius-sm);padding:8px 12px;">⚠️ Sin este bloque, los píxeles VML escalan según el DPI del monitor. Los valores de esta herramienta asumen que está activo en la template.</p>
+  </div>
+  <div id="dpi-overlay" onclick="toggleDpiPanel()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;"></div>
+
   <!-- AUDITOR -->
   <div id="tab-audit" style="display:none">
     <div style="max-width:720px;margin:0 auto;">
@@ -186,12 +238,18 @@
 const CW16={' ':4.4,'a':8.9,'b':9.3,'c':8.0,'d':9.3,'e':8.9,'f':5.3,'g':9.3,'h':9.3,'i':3.6,'j':3.6,'k':8.9,'l':3.6,'m':13.8,'n':9.3,'o':9.8,'p':9.3,'q':9.3,'r':5.8,'s':8.0,'t':5.8,'u':9.3,'v':8.4,'w':11.6,'x':8.4,'y':8.4,'z':8.0,'A':10.7,'B':10.2,'C':10.2,'D':11.1,'E':9.3,'F':8.4,'G':10.7,'H':10.7,'I':4.0,'J':4.4,'K':10.2,'L':8.9,'M':12.4,'N':10.7,'O':11.6,'P':9.8,'Q':11.6,'R':10.2,'S':9.3,'T':9.3,'U':10.7,'V':10.2,'W':13.8,'X':9.8,'Y':9.8,'Z':9.3,'á':8.9,'é':8.9,'í':3.6,'ó':9.8,'ú':9.3,'ñ':9.3,'Á':10.7,'É':9.3,'Í':4.0,'Ó':11.6,'Ú':10.7,'Ñ':10.7};
 
 function getSafety(text,fs){
-  const scale=fs/14,t=twRaw(text,fs),upper=isUpper(text);
-  const ts=100*scale,txl=200*scale;
+  // Calibrated with DPI block active. Anchor: "ACCEDE AL CANAL ESTEVE OFTA" @15px = 320px VML ✅
+  const t=twRaw(text,fs),upper=isUpper(text),scale=fs/14;
   let s;
-  if(upper){if(t<ts)s=80*scale;else if(t<txl)s=120*scale;else s=t*0.55;}
-  else{if(t<ts)s=60*scale;else s=100*scale;}
-  return Math.round(s/5)*5;
+  if(upper){
+    if(t<80*scale)      s=t*0.35;   // UPPERCASE short
+    else if(t<160*scale)s=t*0.25;   // UPPERCASE mid
+    else                s=t*0.215;  // UPPERCASE long
+  }else{
+    if(t<80*scale) s=t*0.30;  // lowercase short
+    else           s=t*0.20;  // lowercase long
+  }
+  return Math.round(Math.max(s,20)/5)*5;
 }
 function twRaw(text,fs){let w=0;for(const c of text)w+=(CW16[c]||8.0);return w*(fs/16);}
 function isUpper(text){const l=text.split('').filter(c=>/[a-zA-ZÀ-ÿ]/.test(c));return l.length>0&&l.filter(c=>c===c.toUpperCase()).length/l.length>0.5;}
@@ -214,31 +272,44 @@ function onTitleChange(){titleUserEdited=document.getElementById('g-title').valu
 function getTitle(){return document.getElementById('g-title').value.trim()||document.getElementById('g-text').value.trim()||'Botón';}
 
 function buildHTML(p){
-  const{text,fs,pv,ph,color,color2,style,alias,href,title,trackeable,textColor,bold}=p;
+  const{text,fs,pv,ph,style,alias,href,title,trackeable,textColor,bold}=p;
+  const mode=window.currentColorMode||'solid';
   const{vmlW,aW,height,lh}=calcVML(text,fs,pv,ph);
-  const arcsize=style==='pill'?'50%':'16%',radius=style==='pill'?'100px':'8px';
-  const hasGrad=color2&&color2.trim();
-  const bgLines=hasGrad?`background-color: ${color};\n    background: linear-gradient(to left, ${color}, ${color2.trim()});`:`background-color: ${color};`;
+  const arcsize=style==='pill'?'50%':(style==='rounded'?'16%':'0%');
+  const radius=style==='pill'?'100px':(style==='rounded'?'8px':'0px');
   const fw=bold?'bold':'normal';
+  let fillColor,strokeColor,bgLines,borderLine='',btnTextColor=textColor;
+  if(mode==='gradient'){
+    const g1=p.grad1||'#0E98B0',g2=p.grad2||'#004676';
+    fillColor=g1;strokeColor=g1;
+    bgLines=`background-color: ${g1};\n    background: linear-gradient(to left, ${g1}, ${g2});`;
+  }else if(mode==='border'){
+    const bc=p.bordercol||'#0E98B0',bg=p.bgcol||'#ffffff';
+    fillColor=bg;strokeColor=bc;bgLines=`background-color: ${bg};`;
+    borderLine=`\n    border: 1px solid ${bc};\n    mso-border-alt: none;`;btnTextColor=bc;
+  }else{
+    const c=p.color||'#0E98B0';fillColor=c;strokeColor=c;bgLines=`background-color: ${c};`;
+  }
   return `<div style="text-align:center;">
+${mode==='border'?'<!--[if mso]><style type="text/css">.mso-no-border{border:none!important;mso-border-alt:none!important;}</style><![endif]-->\n':''}
 <!--[if mso]>
 <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns:w="urn:schemas-microsoft-com:office:word"
   style="v-text-anchor:middle;width:${vmlW}px;height:${height}px;"
   arcsize="${arcsize}"
-  strokecolor="${color}"
+  strokecolor="${strokeColor}"
   strokeweight="1px"
-  fillcolor="${color}">
+  fillcolor="${fillColor}">
   <w:anchorlock/>
-  <center style="color:${textColor};font-family:Arial,Helvetica,sans-serif;font-weight:${fw};font-size:${fs}px;line-height:${lh}px;mso-line-height-rule:exactly;mso-text-raise:0;">
+  <center style="color:${btnTextColor};font-family:Arial,Helvetica,sans-serif;font-weight:${fw};font-size:${fs}px;line-height:${lh}px;mso-line-height-rule:exactly;mso-text-raise:0;">
 <![endif]-->
 <a
-  alias="${alias}"
+  class="${mode==='border'?'mso-no-border':''}"  alias="${alias}"
   conversion="${trackeable?'true':'false'}"
   href="${href}"
   title="${title}"
   style="${bgLines}
-    color: ${textColor};
+    color: ${btnTextColor};
     text-decoration: none;
     font-family: Arial, Helvetica, sans-serif;
     font-size: ${fs}px;
@@ -250,9 +321,9 @@ function buildHTML(p){
     text-align: center;
     width: ${aW}px;
     text-size-adjust: none;
-    mso-line-height-rule: exactly;"
+    mso-line-height-rule: exactly;${borderLine}"
   target="_blank">
-  <span style="color:${textColor};text-decoration:none;">${text}</span>
+  <span style="color:${btnTextColor};text-decoration:none;">${text}</span>
 </a><!--[if mso]>
   </center>
 </v:roundrect>
@@ -272,6 +343,7 @@ function updateTracking(){
   if(!yes&&a.value.startsWith('C_'))a.value='N_'+a.value.slice(2);
 }
 function getGenParams(){
+  const mode=window.currentColorMode||'solid';
   return{
     text:document.getElementById('g-text').value||'Botón',
     fs:parseInt(document.getElementById('g-fs').value),
@@ -279,8 +351,11 @@ function getGenParams(){
     ph:parseInt(document.getElementById('g-ph').value)||1,
     textColor:document.getElementById('g-textcolor').value||'#ffffff',
     bold:document.getElementById('g-bold').checked,
-    color:document.getElementById('g-color').value||'#000000',
-    color2:document.getElementById('g-color2').value,
+    color:mode==='solid'?(document.getElementById('g-color')?.value||'#0E98B0'):'#0E98B0',
+    grad1:document.getElementById('g-grad1')?.value||'#0E98B0',
+    grad2:document.getElementById('g-grad2')?.value||'#004676',
+    bordercol:document.getElementById('g-bordercol')?.value||'#0E98B0',
+    bgcol:document.getElementById('g-bgcol')?.value||'#ffffff',
     style:document.getElementById('g-style').value,
     alias:document.getElementById('g-alias').value||'C_ALIAS',
     href:document.getElementById('g-href').value||'#',
@@ -290,11 +365,15 @@ function getGenParams(){
 }
 function updatePreview(){
   const p=getGenParams();
+  const mode=window.currentColorMode||'solid';
   const{vmlW,height,safety,twPx}=calcVML(p.text,p.fs,p.pv,p.ph);
-  const radius=p.style==='pill'?'100px':'8px';
-  const bg=(p.color2&&p.color2.trim())?`linear-gradient(to left,${p.color},${p.color2.trim()})`:p.color;
+  const radius=p.style==='pill'?'100px':(p.style==='rounded'?'8px':'0px');
   const fw=p.bold?'bold':'normal';
-  document.getElementById('g-preview').innerHTML=`<a href="#" style="background:${bg};color:${p.textColor||'#fff'};text-decoration:none;font-family:Arial,sans-serif;font-size:${p.fs}px;font-weight:${fw};border-radius:${radius};display:inline-block;padding:${p.pv}px ${p.ph}px;">${p.text}</a>`;
+  let bg,previewColor=p.textColor||'#fff',previewBorder='none';
+  if(mode==='gradient') bg=`linear-gradient(to left,${p.grad1},${p.grad2})`;
+  else if(mode==='border'){bg=p.bgcol;previewColor=p.bordercol;previewBorder=`1px solid ${p.bordercol}`;}
+  else bg=p.color;
+  document.getElementById('g-preview').innerHTML=`<a href="#" style="background:${bg};color:${previewColor};border:${previewBorder};text-decoration:none;font-family:Arial,sans-serif;font-size:${p.fs}px;font-weight:${fw};border-radius:${radius};display:inline-block;padding:${p.pv}px ${p.ph}px;">${p.text}</a>`;
   const ts=document.getElementById('g-title').value.trim()?'personalizado':'auto';
   document.getElementById('g-info').innerHTML=`<span class="info-pill">VML: ${vmlW}px</span><span class="info-pill">height: ${height}px</span><span class="info-pill">safety: ${safety}px</span><span class="info-pill">texto: ${twPx}px</span><span class="info-pill">${p.style}</span><span class="info-pill">${p.trackeable?'trackeable':'no trackeable'}</span><span class="info-pill">title: ${ts}</span>`;
 }
@@ -433,7 +512,35 @@ function copyCode(id){
     const orig=btn.textContent;btn.textContent='¡Copiado!';setTimeout(()=>btn.textContent=orig,1500);
   });
 }
+function setColorMode(mode){
+  window.currentColorMode=mode;
+  ['solid','gradient','border'].forEach(m=>{
+    const el=document.getElementById('cmode-'+m);
+    const tab=document.getElementById('ctab-'+m);
+    if(el)el.style.display=m===mode?'block':'none';
+    if(tab){tab.style.background=m===mode?'var(--bg3)':'transparent';tab.style.color=m===mode?'var(--text)':'var(--text2)';tab.style.border=m===mode?'1px solid var(--border2)':'none';}
+  });
+  updatePreview();
+}
+window.currentColorMode='solid';
 updatePreview();
+
+function toggleDpiPanel(){
+  const panel=document.getElementById('dpi-panel');
+  const overlay=document.getElementById('dpi-overlay');
+  const open=panel.style.display==='none';
+  panel.style.display=open?'block':'none';
+  overlay.style.display=open?'block':'none';
+}
+function copyDpi(id,btn){
+  const el=document.getElementById(id);
+  const text=el.textContent
+    .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig=btn.textContent;btn.textContent='¡Copiado!';
+    setTimeout(()=>btn.textContent=orig,1500);
+  });
+}
 </script>
 </body>
 </html>
