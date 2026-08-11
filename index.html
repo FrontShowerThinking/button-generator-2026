@@ -43,12 +43,10 @@
   .tab{flex:1;padding:8px 16px;border:none;border-radius:calc(var(--radius) - 2px);cursor:pointer;font-size:13px;font-weight:500;font-family:var(--font);background:transparent;color:var(--text2);transition:all .15s;}
   .tab:hover{color:var(--text);}
   .tab.active{background:var(--bg3);color:var(--text);border:1px solid var(--border2);}
-
   /* Two-column layout for generator */
   .gen-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
   .gen-inputs{min-width:0;}
   .gen-output{min-width:0;position:sticky;top:24px;}
-
   .section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:18px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
   .section-label:first-child{margin-top:0;}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
@@ -104,7 +102,6 @@
       <button class="tab" onclick="switchTab('audit')">Auditar botón</button>
     </div>
   </div>
-
   <!-- GENERADOR -->
   <div id="tab-gen">
     <div class="gen-layout">
@@ -132,7 +129,6 @@
           </div>
           <div class="field"><label>Color del texto</label><input type="text" id="g-textcolor" value="#ffffff" oninput="updatePreview()"></div>
         </div>
-
         <div class="section-label">Color y estilo</div>
         <div style="display:flex;gap:4px;margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:3px;">
           <button id="ctab-solid" onclick="setColorMode('solid')" style="flex:1;padding:6px 8px;border:1px solid var(--border2);border-radius:calc(var(--radius) - 2px);cursor:pointer;font-size:12px;font-weight:500;font-family:var(--font);background:var(--bg3);color:var(--text);">Sólido</button>
@@ -161,7 +157,6 @@
             <option value="square">Square (sin radio)</option>
           </select>
         </div>
-
         <div class="grid">
           <div class="field"><label>Padding vertical (px)</label><input type="number" id="g-pv" value="15" min="1" oninput="onPaddingChange()"></div>
           <div class="field"><label>Padding horizontal (px)</label><input type="number" id="g-ph" value="20" min="1" oninput="onPaddingChange()"></div>
@@ -169,7 +164,6 @@
         <div id="g-padding-warn" style="display:none;font-size:11px;color:var(--warn-text);background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius-sm);padding:6px 10px;margin-bottom:8px;">
           ⚠️ Padding por debajo del recomendado (15px vertical · 20px horizontal).
         </div>
-
         <div class="section-label">SFMC</div>
         <div class="grid">
           <div class="field"><label>¿Trackeable?</label>
@@ -184,10 +178,8 @@
           <div class="field"><label>URL (href)</label><input type="text" id="g-href" value="https://www.ejemplo.es" oninput="updatePreview()"></div>
           <div class="field"><label>Title <span class="auto-note">auto = texto</span></label><input type="text" id="g-title" placeholder="Se usa el texto del botón" oninput="onTitleChange()"></div>
         </div>
-
         <button class="btn-generate" onclick="generateBtn()">Generar HTML</button>
       </div>
-
       <!-- RIGHT: preview + code -->
       <div class="gen-output">
         <div class="section-label">Preview</div>
@@ -202,14 +194,12 @@
       </div>
     </div>
   </div>
-
   <!-- DPI Config Popup -->
   <div id="dpi-panel" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:480px;max-width:90vw;max-height:85vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:24px 28px;z-index:1000;box-shadow:var(--shadow);">
     <div style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:-1;" onclick="toggleDpiPanel()"></div>
     <button onclick="toggleDpiPanel()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1;">×</button>
     <p style="margin:0 0 4px;font-size:15px;font-weight:600;color:var(--text);">⚙️ Configuración del HEAD</p>
     <p style="margin:0 0 16px;font-size:12px;color:var(--text3);">Añade esto en el &lt;head&gt; de tu template SFMC para que los botones VML funcionen correctamente en Outlook.</p>
-
     <p style="margin:0 0 6px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;">1. Namespaces en el tag &lt;html&gt;</p>
     <div style="position:relative;">
       <pre style="margin:0 0 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--mono);font-size:11px;color:var(--text);white-space:pre;overflow-x:auto;" id="dpi-code-1">&lt;html xmlns="http://www.w3.org/1999/xhtml"
@@ -217,7 +207,6 @@
       xmlns:o="urn:schemas-microsoft-com:office:office"&gt;</pre>
       <button onclick="copyDpi('dpi-code-1',this)" style="position:absolute;top:6px;right:6px;padding:3px 10px;font-size:11px;font-family:var(--font);border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);cursor:pointer;color:var(--text2);">Copiar</button>
     </div>
-
     <p style="margin:0 0 6px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;">2. Bloque DPI dentro del &lt;head&gt;</p>
     <div style="position:relative;">
       <pre style="margin:0 0 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--mono);font-size:11px;color:var(--text);white-space:pre;overflow-x:auto;" id="dpi-code-2">&lt;!--[if mso]&gt;
@@ -230,11 +219,9 @@
 &lt;![endif]--&gt;</pre>
       <button onclick="copyDpi('dpi-code-2',this)" style="position:absolute;top:6px;right:6px;padding:3px 10px;font-size:11px;font-family:var(--font);border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);cursor:pointer;color:var(--text2);">Copiar</button>
     </div>
-
     <p style="margin:0;font-size:12px;color:var(--warn-text);background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius-sm);padding:8px 12px;">⚠️ Sin este bloque, los píxeles VML escalan según el DPI del monitor. Los valores de esta herramienta asumen que está activo en la template.</p>
   </div>
   <div id="dpi-overlay" onclick="toggleDpiPanel()" style="display:none;position:fixed;inset:0;background:var(--overlay);z-index:999;"></div>
-
   <!-- AUDITOR -->
   <div id="tab-audit" style="display:none">
     <div style="max-width:720px;margin:0 auto;">
@@ -250,11 +237,9 @@
     </div>
   </div>
 </div>
-
 <script>
 /* ---------- THEME (persisted via localStorage) ---------- */
 const THEME_KEY='sfmc-btn-gen-theme';
-
 function loadTheme(){
   let theme=null;
   try{ theme=localStorage.getItem(THEME_KEY); }catch(e){ /* localStorage blocked (e.g. privacy mode) */ }
@@ -275,9 +260,7 @@ function toggleTheme(){
   applyTheme(current==='dark' ? 'light' : 'dark', true);
 }
 loadTheme();
-
 const CW16={' ':4.4,'a':8.9,'b':9.3,'c':8.0,'d':9.3,'e':8.9,'f':5.3,'g':9.3,'h':9.3,'i':3.6,'j':3.6,'k':8.9,'l':3.6,'m':13.8,'n':9.3,'o':9.8,'p':9.3,'q':9.3,'r':5.8,'s':8.0,'t':5.8,'u':9.3,'v':8.4,'w':11.6,'x':8.4,'y':8.4,'z':8.0,'A':10.7,'B':10.2,'C':10.2,'D':11.1,'E':9.3,'F':8.4,'G':10.7,'H':10.7,'I':4.0,'J':4.4,'K':10.2,'L':8.9,'M':12.4,'N':10.7,'O':11.6,'P':9.8,'Q':11.6,'R':10.2,'S':9.3,'T':9.3,'U':10.7,'V':10.2,'W':13.8,'X':9.8,'Y':9.8,'Z':9.3,'á':8.9,'é':8.9,'í':3.6,'ó':9.8,'ú':9.3,'ñ':9.3,'Á':10.7,'É':9.3,'Í':4.0,'Ó':11.6,'Ú':10.7,'Ñ':10.7};
-
 function getSafety(text,fs){
   // Calibrated with DPI block active. Anchor: "ACCEDE AL CANAL ESTEVE OFTA" @15px = 320px VML ✅
   const t=twRaw(text,fs),upper=isUpper(text),scale=fs/14;
@@ -292,26 +275,39 @@ function getSafety(text,fs){
   }
   return Math.round(Math.max(s,20)/5)*5;
 }
-function twRaw(text,fs){let w=0;for(const c of text)w+=(CW16[c]||8.0);return w*(fs/16);}
-function isUpper(text){const l=text.split('').filter(c=>/[a-zA-ZÀ-ÿ]/.test(c));return l.length>0&&l.filter(c=>c===c.toUpperCase()).length/l.length>0.5;}
+function stripTags(text){return text.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();}
+function twRaw(text,fs){
+  // Si el texto tiene <br>, el ancho necesario es el de la línea más larga
+  const lines=text.split(/<br\s*\/?>/i).map(l=>l.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim());
+  const widths=lines.map(l=>{let w=0;for(const c of l)w+=(CW16[c]||8.0);return w*(fs/16);});
+  return Math.max(...widths);
+}
+function isUpper(text){const t=stripTags(text);const l=t.split('').filter(c=>/[a-zA-ZÀ-ÿ]/.test(c));return l.length>0&&l.filter(c=>c===c.toUpperCase()).length/l.length>0.5;}
 function getHeight(fs){if(fs<=14)return 50;if(fs<=16)return 55;if(fs<=18)return 60;return 65;}
+function countLines(text){return text.split(/<br\s*\/?>/i).length;}
+const LH_MAP={12:14,13:16,14:16,15:18,16:20,17:22,18:22,19:24,20:24};
+// Alto del VML teniendo en cuenta las líneas (<br>). Cada línea extra suma un line-height.
+function calcHeight(text,fs){
+  const baseH=getHeight(fs),lh=LH_MAP[fs]||20,nLines=countLines(text);
+  return nLines>1?Math.round((baseH+(nLines-1)*lh)/5)*5:baseH;
+}
 function tw(text,fs){return twRaw(text,fs);}
 function calcVML(text,fs,pv,ph){
   const safety=getSafety(text,fs),raw=twRaw(text,fs)+ph*2+safety;
-  const vmlW=Math.round(raw/5)*5,aW=vmlW-safety,height=getHeight(fs);
-  const lh={12:14,13:16,14:16,15:18,16:20,17:22,18:22,19:24,20:24}[fs]||20;
+  const vmlW=Math.round(raw/5)*5,aW=vmlW-safety,height=calcHeight(text,fs);
+  const lh=LH_MAP[fs]||20;
   return{vmlW,aW,height,lh,safety,twPx:Math.round(twRaw(text,fs))};
 }
 function calcMinVML(text,fs,ph){
+  // Redondeo a múltiplos de 5 igual que calcVML, para que el auditor no marque
+  // como "insuficiente" el propio ancho que genera la herramienta.
   const safety=getSafety(text,fs),twPx=Math.round(twRaw(text,fs));
-  return{minVmlW:Math.ceil(twRaw(text,fs)+ph*2+safety),safety,twPx};
+  return{minVmlW:Math.round((twRaw(text,fs)+ph*2+safety)/5)*5,safety,twPx};
 }
-
 let titleUserEdited=false;
 function onTextChange(){if(!titleUserEdited)document.getElementById('g-title').placeholder=document.getElementById('g-text').value||'Se usa el texto del botón';updatePreview();}
 function onTitleChange(){titleUserEdited=document.getElementById('g-title').value.trim()!=='';updatePreview();}
 function getTitle(){return document.getElementById('g-title').value.trim()||document.getElementById('g-text').value.trim()||'Botón';}
-
 function buildHTML(p){
   const{text,fs,pv,ph,style,alias,href,title,trackeable,textColor,bold}=p;
   const mode=window.currentColorMode||'solid';
@@ -370,7 +366,6 @@ ${mode==='border'?'<!--[if mso]><style type="text/css">.mso-no-border{border:non
 </v:roundrect>
 <![endif]-->
 </div>`;}
-
 function onPaddingChange(){
   const pv=parseInt(document.getElementById('g-pv').value)||0;
   const ph=parseInt(document.getElementById('g-ph').value)||0;
@@ -423,7 +418,6 @@ function generateBtn(){
   document.getElementById('g-code').textContent=buildHTML(p);
   updatePreview();
 }
-
 // --- AUDIT ---
 function getAStyle(code){
   // Try full <a>...</a> block first
@@ -448,9 +442,24 @@ function getBtnText(code){
   if(tit)return tit[1].trim();
   return null;
 }
+// Nº de líneas del botón (cuenta los <br> dentro del <a>)
+function countBtnLines(code){
+  var a=code.match(/<a\b[\s\S]*?>([\s\S]*?)<\/a>/i);
+  var inner=a?a[1]:'';
+  if(!inner)return 1;
+  var n=inner.split(/<br\s*\/?>/i).length;
+  return n<1?1:n;
+}
+// Texto para medir el ancho: conserva los <br> y elimina el resto de etiquetas,
+// para que twRaw pueda dividir por líneas y quedarse con la más ancha.
+function getBtnMeasureText(code){
+  var a=code.match(/<a\b[\s\S]*?>([\s\S]*?)<\/a>/i);
+  if(!a)return null;
+  var parts=a[1].split(/<br\s*\/?>/i).map(function(p){return p.replace(/<[^>]+>/g,' ').replace(/[^\S]+/g,' ').trim();});
+  return parts.join('<br>');
+}
 function hasBrokenConditional(code){return/<![\s\r\n]+\[endif\]/i.test(code);}
 function hasProperATag(code){return/<!\[endif\]-->\s*<a[\s\n>]/i.test(code);}
-
 function auditBtn(){
   const code=document.getElementById('a-code').value.trim();if(!code)return;
   const errors=[],warnings=[],oks=[];
@@ -469,7 +478,7 @@ function auditBtn(){
   const aliasM=code.match(/alias\s*=\s*["']([^"']+)["']/i),convM=code.match(/conversion\s*=\s*["']([^"']+)["']/i);
   const titleM=code.match(/\btitle\s*=\s*["']([^"']+)["']/i);
   const alias=aliasM?aliasM[1].trim():null,conv=convM?convM[1].trim():null,btnText=getBtnText(code);
-
+  const nLines=countBtnLines(code),measureText=getBtnMeasureText(code)||btnText;
   if(!hasFillcolor)errors.push('Falta fillcolor en el VML — botón invisible en Outlook Desktop.');else oks.push('fillcolor presente en VML.');
   if(hasBgGrad&&!hasBgColor)errors.push('Tiene linear-gradient pero falta background-color fallback — botón invisible en OWA.');
   else if(hasBgGrad&&hasBgColor)oks.push('background-color fallback + linear-gradient correctos.');
@@ -480,28 +489,27 @@ function auditBtn(){
   if(!hasATag){errors.push('Falta la etiqueta de apertura &lt;a — el código está incompleto. Asegúrate de copiar el botón completo.');}
   else if(!aTagOk){errors.push('La etiqueta &lt;a no está correctamente posicionada después de &lt;![endif]--&gt;.');}
   else if(!brokenCond){oks.push('Etiqueta &lt;a correctamente posicionada.');}
-
-  function recH(fz){if(!fz)return 55;if(fz<=14)return 50;if(fz<=16)return 55;if(fz<=18)return 60;return 65;}
-  const rH=recH(fs);
-  if(!hasHeight)errors.push(`El VML no tiene height definido. Añadir height:${rH}px.`);
+  function recH(fz,lines){lines=lines||1;const base=(!fz?55:fz<=14?50:fz<=16?55:fz<=18?60:65);if(lines<=1)return base;const lh=LH_MAP[fz]||20;return Math.round((base+(lines-1)*lh)/5)*5;}
+  const rH=recH(fs,nLines);
+  const lineNote=nLines>1?` (${nLines} líneas)`:'';
+  if(!hasHeight)errors.push(`El VML no tiene height definido. Añadir height:${rH}px${lineNote}.`);
   else if(vmlH!==null){
-    if(vmlH<rH)errors.push(`Height VML (${vmlH}px) insuficiente para font-size ${fs||'?'}px. Recomendado: ${rH}px.`);
-    else if(vmlH>rH+10)warnings.push(`Height VML (${vmlH}px) mayor al recomendado (${rH}px) para font-size ${fs||'?'}px.`);
-    else oks.push(`Height VML (${vmlH}px) correcto para font-size ${fs||'?'}px.`);
+    if(vmlH<rH)errors.push(`Height VML (${vmlH}px) insuficiente para font-size ${fs||'?'}px${lineNote}. Recomendado: ${rH}px.`);
+    else if(vmlH>rH+10)warnings.push(`Height VML (${vmlH}px) mayor al recomendado (${rH}px) para font-size ${fs||'?'}px${lineNote}.`);
+    else oks.push(`Height VML (${vmlH}px) correcto para font-size ${fs||'?'}px${lineNote}.`);
   }
   if(pv!==null&&pv<15)warnings.push(`Padding vertical (${pv}px) por debajo del recomendado de 15px.`);
   if(ph!==null&&ph<20)warnings.push(`Padding horizontal (${ph}px) por debajo del recomendado de 20px.`);
   if(pv!==null&&ph!==null&&pv>=15&&ph>=20)oks.push(`Padding ${pv}px ${ph}px correcto.`);
-
   if(fs&&btnText&&vmlW!==null){
     const uPh=ph!==null?ph:20,uPv=pv!==null?pv:15;
-    const{minVmlW,safety,twPx}=calcMinVML(btnText,fs,uPh);
-    const{vmlW:optW}=calcVML(btnText,fs,uPv,uPh);
-    if(vmlW<minVmlW)errors.push(`VML width (${vmlW}px) insuficiente para "${btnText}" a ${fs}px. Mínimo: texto ${twPx}px + padding ${uPh*2}px + safety ${safety}px = ${minVmlW}px. Óptimo: ${optW}px.`);
-    else if(vmlW<optW)warnings.push(`VML width (${vmlW}px) suficiente pero el óptimo calculado es ${optW}px.`);
-    else oks.push(`VML width (${vmlW}px) correcto para "${btnText}".`);
+    const{minVmlW,safety,twPx}=calcMinVML(measureText,fs,uPh);
+    const{vmlW:optW}=calcVML(measureText,fs,uPv,uPh);
+    const widthNote=nLines>1?` (línea más ancha, ${nLines} líneas)`:'';
+    if(vmlW<minVmlW)errors.push(`VML width (${vmlW}px) insuficiente para "${btnText}" a ${fs}px${widthNote}. Mínimo: texto ${twPx}px + padding ${uPh*2}px + safety ${safety}px = ${minVmlW}px. Óptimo: ${optW}px.`);
+    else if(vmlW<optW)warnings.push(`VML width (${vmlW}px) suficiente pero el óptimo calculado es ${optW}px${widthNote}.`);
+    else oks.push(`VML width (${vmlW}px) correcto para "${btnText}"${widthNote}.`);
   }else if(!btnText)warnings.push('No se pudo extraer el texto del botón.');
-
   if(arcsize&&borderRadius){const bv=parseFloat(borderRadius);
     if(arcsize==='50%'&&bv<50)warnings.push(`arcsize="50%" (pill) pero border-radius:${borderRadius} — debería ser 100px.`);
     else if(arcsize==='16%'&&bv>20)warnings.push(`arcsize="16%" (rounded) pero border-radius:${borderRadius} — debería ser 8px.`);
@@ -514,7 +522,6 @@ function auditBtn(){
   if(!titleM)warnings.push('Falta el atributo title.');
   else if(btnText&&titleM[1].trim()===btnText)oks.push(`title="${titleM[1]}" coincide con el texto del botón.`);
   else oks.push(`title="${titleM[1]}" personalizado.`);
-
   let html='';
   errors.forEach(e=>{html+=`<div class="result-item critical"><span class="result-tag critical">Error</span><span>${e}</span></div>`;});
   warnings.forEach(w=>{html+=`<div class="result-item warning"><span class="result-tag warning">Aviso</span><span>${w}</span></div>`;});
@@ -524,24 +531,23 @@ function auditBtn(){
   document.getElementById('a-fixed-wrap').style.display=hasCritical?'block':'none';
   if(hasCritical)document.getElementById('a-fixed').textContent=buildFixed(code,{hasBgColor,hasBgGrad,fs,vmlH,hasHeight,vmlW,aWidth,aStyle,pv,ph,btnText,brokenCond,titleM});
 }
-
 function buildFixed(code,c){
   let f=code;
   const uPv=c.pv!==null?c.pv:15,uPh=c.ph!==null?c.ph:20;
   if(!c.hasBgColor&&c.hasBgGrad){const m=f.match(/linear-gradient[^)]*?(#[0-9a-fA-F]{3,6})/i);const fb=m?m[1]:'#000000';f=f.replace(/background\s*:\s*linear-gradient/i,`background-color: ${fb};\n    background: linear-gradient`);}
-  function rH(fz){if(!fz)return 55;if(fz<=14)return 50;if(fz<=16)return 55;if(fz<=18)return 60;return 65;}
-  const recH=rH(c.fs);
+  const nLines=countBtnLines(code),measureText=getBtnMeasureText(code)||c.btnText;
+  function rH(fz,lines){lines=lines||1;const base=(!fz?55:fz<=14?50:fz<=16?55:fz<=18?60:65);if(lines<=1)return base;const lh=LH_MAP[fz]||20;return Math.round((base+(lines-1)*lh)/5)*5;}
+  const recH=rH(c.fs,nLines);
   if(!c.hasHeight)f=f.replace(/(v:roundrect[^>]*style\s*=\s*"[^"]*width\s*:\s*\d+\s*px\s*)/i,`$1;height:${recH}px`);
   else if(c.vmlH!==null&&c.vmlH<recH)f=f.replace(/(v:roundrect[^>]*style\s*=\s*"[^"]*height\s*:\s*)\d+(\s*px)/i,`$1${recH}$2`);
   if(c.fs&&c.btnText&&c.vmlW!==null){
-    const{minVmlW}=calcMinVML(c.btnText,c.fs,uPh);
-    if(c.vmlW<minVmlW){const{vmlW:optW}=calcVML(c.btnText,c.fs,uPv,uPh);f=f.replace(/(v:roundrect[^>]*style\s*=\s*["'][^"']*width\s*:\s*)\d+(\s*px)/i,`$1${optW}$2`);}
+    const{minVmlW}=calcMinVML(measureText,c.fs,uPh);
+    if(c.vmlW<minVmlW){const{vmlW:optW}=calcVML(measureText,c.fs,uPv,uPh);f=f.replace(/(v:roundrect[^>]*style\s*=\s*["'][^"']*width\s*:\s*)\d+(\s*px)/i,`$1${optW}$2`);}
   }
   if(c.brokenCond)f=f.replace(/<!\s*\r?\n\s*\[endif\]/gi,'<![endif]');
   if(!c.titleM&&c.btnText)f=f.replace(/target="_blank"/,`title="${c.btnText}" target="_blank"`);
   return f;
 }
-
 function switchTab(tab){
   document.getElementById('tab-gen').style.display=tab==='gen'?'block':'none';
   document.getElementById('tab-audit').style.display=tab==='audit'?'block':'none';
@@ -565,7 +571,6 @@ function setColorMode(mode){
 }
 window.currentColorMode='solid';
 updatePreview();
-
 function toggleDpiPanel(){
   const panel=document.getElementById('dpi-panel');
   const overlay=document.getElementById('dpi-overlay');
