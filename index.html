@@ -6,7 +6,7 @@
 <title>Generador de botones Outlook · SFMC</title>
 <link rel="icon" href="https://www.showerthinking.es/favicon.ico" type="image/x-icon">
 <style>
-  :root {
+  :root,[data-theme="dark"] {
     --bg:#1a1a1a;--bg2:#242424;--bg3:#2e2e2e;
     --border:#3a3a3a;--border2:#444;
     --text:#e8e8e8;--text2:#999;--text3:#666;
@@ -16,13 +16,29 @@
     --danger-bg:#2d1a1a;--danger-border:#5a2a2a;--danger-text:#f08080;
     --warn-bg:#2a2310;--warn-border:#5a4a20;--warn-text:#d4a843;
     --ok-bg:#142014;--ok-border:#2a4a2a;--ok-text:#6abf6a;
+    --shadow:0 16px 48px rgba(0,0,0,.6);
+    --overlay:rgba(0,0,0,.5);
+  }
+  [data-theme="light"] {
+    --bg:#f5f5f4;--bg2:#ffffff;--bg3:#ececea;
+    --border:#e0ded9;--border2:#cfccc6;
+    --text:#1f1f1d;--text2:#6b6b66;--text3:#9a9892;
+    --accent:#b8603f;
+    --danger-bg:#fdecec;--danger-border:#f3b6b6;--danger-text:#b3271e;
+    --warn-bg:#fdf3df;--warn-border:#e8c87a;--warn-text:#8a6315;
+    --ok-bg:#eaf6ea;--ok-border:#b9ddb9;--ok-text:#2f7a2f;
+    --shadow:0 16px 48px rgba(0,0,0,.15);
+    --overlay:rgba(0,0,0,.25);
   }
   *,*::before,*::after{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh;transition:background .2s,color .2s;}
   .app{max-width:1200px;margin:0 auto;padding:24px 24px 48px;}
-  .app-header{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);text-align:center;}
+  .app-header{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);text-align:center;position:relative;}
   .app-header h1{margin:0 0 4px;font-size:18px;font-weight:600;}
   .app-header p{margin:0 0 16px;font-size:12px;color:var(--text3);}
+  .header-actions{position:absolute;top:0;right:0;display:flex;gap:6px;}
+  .icon-btn{background:none;border:1px solid transparent;cursor:pointer;font-size:16px;color:var(--text3);padding:6px;line-height:1;vertical-align:middle;border-radius:var(--radius-sm);transition:background .15s,color .15s,border-color .15s;}
+  .icon-btn:hover{color:var(--text);background:var(--bg2);border-color:var(--border2);}
   .tabs{display:inline-flex;gap:6px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:4px;min-width:320px;}
   .tab{flex:1;padding:8px 16px;border:none;border-radius:calc(var(--radius) - 2px);cursor:pointer;font-size:13px;font-weight:500;font-family:var(--font);background:transparent;color:var(--text2);transition:all .15s;}
   .tab:hover{color:var(--text);}
@@ -39,22 +55,22 @@
   .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
   .field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
   .field label{font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;}
-  .field input,.field select{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:var(--font);padding:8px 10px;outline:none;transition:border-color .15s;width:100%;}
+  .field input,.field select{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:var(--font);padding:8px 10px;outline:none;transition:border-color .15s,background .2s,color .2s;width:100%;}
   .field input:focus,.field select:focus{border-color:var(--accent);}
-  .field select option{background:var(--bg2);}
+  .field select option{background:var(--bg2);color:var(--text);}
   .radio-group{display:flex;gap:16px;padding:6px 0;}
   .radio-group label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:0;cursor:pointer;}
   .radio-group input[type=radio]{accent-color:var(--accent);}
   .auto-note{font-size:11px;color:var(--text3);font-style:italic;font-weight:400;margin-left:4px;text-transform:none;letter-spacing:0;}
   .btn-generate{width:100%;padding:11px 20px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:14px;font-weight:500;font-family:var(--font);cursor:pointer;margin-top:16px;transition:background .15s,border-color .15s;}
-  .btn-generate:hover{background:#353535;border-color:#555;}
+  .btn-generate:hover{background:var(--border2);}
   .preview-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px 24px;text-align:center;margin-bottom:10px;}
   .preview-empty{color:var(--text3);font-size:13px;}
   .info-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
   .info-pill{font-size:11px;padding:3px 10px;border-radius:100px;background:var(--bg2);border:1px solid var(--border2);color:var(--text2);}
   .output-wrap{position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-top:4px;}
   .output-label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding:10px 12px 0;}
-  .output-wrap pre{margin:0;padding:10px 12px 14px;font-family:var(--mono);font-size:11.5px;color:#c9d1d9;white-space:pre-wrap;word-break:break-all;line-height:1.6;max-height:400px;overflow-y:auto;}
+  .output-wrap pre{margin:0;padding:10px 12px 14px;font-family:var(--mono);font-size:11.5px;color:var(--text);white-space:pre-wrap;word-break:break-all;line-height:1.6;max-height:400px;overflow-y:auto;}
   .copy-btn{position:absolute;top:8px;right:8px;padding:4px 12px;font-size:12px;font-family:var(--font);border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg3);cursor:pointer;color:var(--text2);transition:color .15s;}
   .copy-btn:hover{color:var(--text);}
   .audit-textarea{width:100%;min-height:140px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:12px;font-family:var(--mono);padding:10px 12px;outline:none;resize:vertical;transition:border-color .15s;line-height:1.5;}
@@ -71,16 +87,17 @@
   .fixed-label{font-size:12px;font-weight:500;color:var(--text2);margin-top:20px;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
   .fixed-label span{font-size:11px;color:var(--text3);font-weight:400;}
   @media(max-width:800px){.gen-layout{grid-template-columns:1fr;}.gen-output{position:static;}}
-  @media(max-width:520px){.grid,.grid3{grid-template-columns:1fr;}}
+  @media(max-width:520px){.grid,.grid3{grid-template-columns:1fr;}.header-actions{position:static;justify-content:center;margin-bottom:10px;}}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="app-header">
-    <h1 style="display:inline-flex;align-items:center;gap:10px;">
-      Generador · Auditor de botones Outlook
-      <button onclick="toggleDpiPanel()" title="Configuración HEAD" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--text3);padding:0;line-height:1;vertical-align:middle;">⚙️</button>
-    </h1>
+    <div class="header-actions">
+      <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+      <button class="icon-btn" onclick="toggleDpiPanel()" title="Configuración HEAD">⚙️</button>
+    </div>
+    <h1>Generador · Auditor de botones Outlook</h1>
     <p>SFMC · Outlook 2508 (compilación 19127.20622) · 600px</p>
     <div class="tabs">
       <button class="tab active" onclick="switchTab('gen')">Generar botón</button>
@@ -187,7 +204,7 @@
   </div>
 
   <!-- DPI Config Popup -->
-  <div id="dpi-panel" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:480px;max-width:90vw;max-height:85vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:24px 28px;z-index:1000;box-shadow:0 16px 48px rgba(0,0,0,.6);">
+  <div id="dpi-panel" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:480px;max-width:90vw;max-height:85vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:24px 28px;z-index:1000;box-shadow:var(--shadow);">
     <div style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:-1;" onclick="toggleDpiPanel()"></div>
     <button onclick="toggleDpiPanel()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1;">×</button>
     <p style="margin:0 0 4px;font-size:15px;font-weight:600;color:var(--text);">⚙️ Configuración del HEAD</p>
@@ -195,7 +212,7 @@
 
     <p style="margin:0 0 6px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;">1. Namespaces en el tag &lt;html&gt;</p>
     <div style="position:relative;">
-      <pre style="margin:0 0 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--mono);font-size:11px;color:#c9d1d9;white-space:pre;overflow-x:auto;" id="dpi-code-1">&lt;html xmlns="http://www.w3.org/1999/xhtml"
+      <pre style="margin:0 0 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--mono);font-size:11px;color:var(--text);white-space:pre;overflow-x:auto;" id="dpi-code-1">&lt;html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:v="urn:schemas-microsoft-com:vml"
       xmlns:o="urn:schemas-microsoft-com:office:office"&gt;</pre>
       <button onclick="copyDpi('dpi-code-1',this)" style="position:absolute;top:6px;right:6px;padding:3px 10px;font-size:11px;font-family:var(--font);border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);cursor:pointer;color:var(--text2);">Copiar</button>
@@ -203,7 +220,7 @@
 
     <p style="margin:0 0 6px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;">2. Bloque DPI dentro del &lt;head&gt;</p>
     <div style="position:relative;">
-      <pre style="margin:0 0 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--mono);font-size:11px;color:#c9d1d9;white-space:pre;overflow-x:auto;" id="dpi-code-2">&lt;!--[if mso]&gt;
+      <pre style="margin:0 0 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--mono);font-size:11px;color:var(--text);white-space:pre;overflow-x:auto;" id="dpi-code-2">&lt;!--[if mso]&gt;
 &lt;xml&gt;
   &lt;o:OfficeDocumentSettings&gt;
     &lt;o:AllowPNG/&gt;
@@ -216,7 +233,7 @@
 
     <p style="margin:0;font-size:12px;color:var(--warn-text);background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius-sm);padding:8px 12px;">⚠️ Sin este bloque, los píxeles VML escalan según el DPI del monitor. Los valores de esta herramienta asumen que está activo en la template.</p>
   </div>
-  <div id="dpi-overlay" onclick="toggleDpiPanel()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;"></div>
+  <div id="dpi-overlay" onclick="toggleDpiPanel()" style="display:none;position:fixed;inset:0;background:var(--overlay);z-index:999;"></div>
 
   <!-- AUDITOR -->
   <div id="tab-audit" style="display:none">
@@ -235,6 +252,30 @@
 </div>
 
 <script>
+/* ---------- THEME (persisted via localStorage) ---------- */
+const THEME_KEY='sfmc-btn-gen-theme';
+
+function loadTheme(){
+  let theme=null;
+  try{ theme=localStorage.getItem(THEME_KEY); }catch(e){ /* localStorage blocked (e.g. privacy mode) */ }
+  if(!theme) theme='dark'; // default
+  applyTheme(theme,false);
+}
+function applyTheme(theme,persist){
+  document.documentElement.setAttribute('data-theme',theme);
+  const btn=document.getElementById('theme-toggle');
+  if(btn) btn.textContent = theme==='dark' ? '🌙' : '☀️';
+  if(persist) saveTheme(theme);
+}
+function saveTheme(theme){
+  try{ localStorage.setItem(THEME_KEY,theme); }catch(e){ /* persistence not available */ }
+}
+function toggleTheme(){
+  const current=document.documentElement.getAttribute('data-theme')==='light' ? 'light' : 'dark';
+  applyTheme(current==='dark' ? 'light' : 'dark', true);
+}
+loadTheme();
+
 const CW16={' ':4.4,'a':8.9,'b':9.3,'c':8.0,'d':9.3,'e':8.9,'f':5.3,'g':9.3,'h':9.3,'i':3.6,'j':3.6,'k':8.9,'l':3.6,'m':13.8,'n':9.3,'o':9.8,'p':9.3,'q':9.3,'r':5.8,'s':8.0,'t':5.8,'u':9.3,'v':8.4,'w':11.6,'x':8.4,'y':8.4,'z':8.0,'A':10.7,'B':10.2,'C':10.2,'D':11.1,'E':9.3,'F':8.4,'G':10.7,'H':10.7,'I':4.0,'J':4.4,'K':10.2,'L':8.9,'M':12.4,'N':10.7,'O':11.6,'P':9.8,'Q':11.6,'R':10.2,'S':9.3,'T':9.3,'U':10.7,'V':10.2,'W':13.8,'X':9.8,'Y':9.8,'Z':9.3,'á':8.9,'é':8.9,'í':3.6,'ó':9.8,'ú':9.3,'ñ':9.3,'Á':10.7,'É':9.3,'Í':4.0,'Ó':11.6,'Ú':10.7,'Ñ':10.7};
 
 function getSafety(text,fs){
